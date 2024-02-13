@@ -72,4 +72,15 @@
 
 <style>
   /* Your styles here */
+    section {
+        margin: 2rem;
+        margin-right: 8rem;
+        margin-left: 8rem;
+    }
+    .card {
+        background-color: rgba(255,255,255,0);
+        border: 1px solid rgba(0,0,0,0.125);
+        border-radius: 0.25rem;
+        box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+    }
 </style>
