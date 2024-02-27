@@ -1,6 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
 	import GModal from './GModal.svelte';
+	import { authHandlers } from '../stores/authStore';
+	import { authStore } from '../stores/authStore';
+
+
+
 	
 	let showModal = false;
 	const handleClose = () => {
@@ -8,6 +13,11 @@
 	};
 
 	let LoggedIn = false;
+
+	if ($authStore.currentUser){
+		//LoggedIn = true;
+		console.log("Logged in: " + $authStore.currentUser.email);
+	}
 
 </script>
 
@@ -36,7 +46,7 @@
 			</ul>
 			{#if LoggedIn}
 				<div class="login-button-container">
-					<button class="btn btn-primary my-2 my-sm-0">Username</button>
+					<button class="btn btn-primary my-2 my-sm-0">Dashboard</button>
 				</div>
 			{:else}
 				<div class="login-button-container">

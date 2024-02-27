@@ -1,17 +1,56 @@
 <script>
     import { createEventDispatcher } from "svelte";
+	import { authHandlers } from "../stores/authStore";
+    import { authStore } from "../stores/authStore";
     const dispatch = createEventDispatcher();
     export let show = false;
 
     const close = () => {
         show = false;
         dispatch("close");
+        register = false;
     };
 
-    // Prevents event from bubbling up to the modal background.
+    // Prevents event from bubbling up to the modal background. Functionality to auto remove modal when clicking outside of it.
     const stopPropagation = (event) => {
         event.stopPropagation();
     };
+
+    //login functionality
+    
+
+    let register = false;
+    if (register){
+        
+    }
+
+    let email = "";
+    let password = "";
+    let confirmPassword = "";
+
+
+    async function handleSubmit(){
+        if(!email || !password || (register && !confirmPassword)){
+            return;
+        }
+
+        if(register && password === confirmPassword){
+            try{
+                await authHandlers.signup(email, password);
+            }catch(err){
+                console.log(err);
+            }
+        } else {
+            try{
+                await authHandlers.login(email, password);
+            }catch(err){
+                console.log(err);
+            }
+        }
+        if ($authStore.currentUser){
+            console.log($authStore.email);
+        }
+    }
 
 </script>
 
@@ -27,13 +66,24 @@
                 </div>
                 <div class="modal-body">
                     <div class="input-container form-group">
-                        <input type="card-text" class="form-control" placeholder="Username" />
-                        <input type="card-text" class="form-control" placeholder="Password" />
+                        <input bind:value={email} type="email" class="form-control" placeholder="Email" />
+                        <input bind:value={password} type="password" class="form-control" placeholder="Password" />
+                        {#if register}
+                        <input bind:value={confirmPassword} type="password" class="form-control" placeholder="Confirm Password" />
+                        {/if}
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary">Register</button>
-                    <button type="button" class="btn btn-primary">Login</button>
+                    {#if !register}
+                    <button on:click={() => {
+                        register = true;
+                    }}  type="button" class="btn btn-secondary" id="register--button" >Register</button>
+                    <button on:click={handleSubmit} type="button" class="btn btn-primary" id="login--button">Login</button>
+                    {/if}
+                    {#if register}
+                    <button on:click={handleSubmit} type="button" class="btn btn-primary" id="login--button">Submit</button>
+                    {/if}
+                    
                 </div>
             </div>
         </div>
