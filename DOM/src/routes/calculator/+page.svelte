@@ -68,6 +68,7 @@
                         <div class="card-body text-center"style="width: 50rem;">
                             <div class="card-text">
                                 <h5 class="card-text">Example reviews</h5>
+                                <h6>test</h6>
                             </div>
                         </div>
                     </div>
@@ -83,14 +84,16 @@
 </section>
 
 
-<style>
-    
+<style lang>
+   
 
     .main-container {
         display: flex;
         justify-content: center;
         align-items: center;
         height: 80vh; 
+        transition: 0.5s;
+        
         
     }
 
@@ -105,7 +108,7 @@
         display: flex;
         flex-direction: row;
     }
-
+ß
     .input-container input {
         margin: 2px;
     }
@@ -114,5 +117,7 @@
         margin-top: 10px;
 
     }
+    
+    
 
 </style>

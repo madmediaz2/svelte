@@ -25,4 +25,6 @@
         align-items: center;
         height: 80vh; 
     }
+
+    
 </style>

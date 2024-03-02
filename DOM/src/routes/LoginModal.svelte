@@ -1,5 +1,5 @@
 <script>
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher} from "svelte";
 	import { authHandlers } from "../stores/authStore";
     import { authStore } from "../stores/authStore";
     const dispatch = createEventDispatcher();
@@ -20,9 +20,6 @@
     
 
     let register = false;
-    if (register){
-        
-    }
 
     let email = "";
     let password = "";
@@ -38,23 +35,24 @@
             try{
                 await authHandlers.signup(email, password);
             }catch(err){
-                console.log(err);
+                //console.log(err);
             }
         } else {
             try{
                 await authHandlers.login(email, password);
             }catch(err){
-                console.log(err);
+                //console.log(err);
             }
         }
         if ($authStore.currentUser){
-            console.log($authStore.email);
+            //console.log($authStore.email);
+            console.log("logged in " + $authStore.currentUser.email);
         }
     }
 
 </script>
 
-{#if show}
+{#if show} 
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="modal" style="display: block;" on:click={close}>
@@ -79,8 +77,7 @@
                         register = true;
                     }}  type="button" class="btn btn-secondary" id="register--button" >Register</button>
                     <button on:click={handleSubmit} type="button" class="btn btn-primary" id="login--button">Login</button>
-                    {/if}
-                    {#if register}
+                    {:else}
                     <button on:click={handleSubmit} type="button" class="btn btn-primary" id="login--button">Submit</button>
                     {/if}
                     
@@ -161,4 +158,6 @@
     .btn-primary:hover {
         background-color: #0069d9;
     }
+
+
 </style>

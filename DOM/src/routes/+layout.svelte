@@ -10,7 +10,7 @@
 
 	onMount(() =>{
 		const unsubscribe = auth.onAuthStateChanged((user) => {
-			console.log(user);
+			//console.log(user);
 			authStore.update((curr) => {
 				return {...curr, isLoading: false, currentUser: user }
 			});
@@ -32,6 +32,20 @@
 	.app {
 		min-height: 100vh;
 		background-image: linear-gradient(to bottom, #ffffff, #6d6d6d);
+		animation-name: popup;
+    	animation-duration: 0.5s;
 	}
+
+	@keyframes popup{
+    from{
+        opacity: 0.5;
+        transform: translateY(10px)
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
 	
 </style>

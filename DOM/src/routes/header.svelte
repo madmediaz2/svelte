@@ -1,27 +1,28 @@
 <script>
 	import { onMount } from 'svelte';
-	import GModal from './GModal.svelte';
+	import LoginModal from './LoginModal.svelte';
 	import { authHandlers } from '../stores/authStore';
 	import { authStore } from '../stores/authStore';
-
-
+	import DashBoardModal from './DashBoardModal.svelte';
 
 	
+
+	async function logout(){
+		await authHandlers.logout();
+	}
+	
+	let loggedIn = false;
 	let showModal = false;
 	const handleClose = () => {
 		showModal = false;
 	};
-
-	let LoggedIn = false;
-
-	if ($authStore.currentUser){
-		//LoggedIn = true;
-		console.log("Logged in: " + $authStore.currentUser.email);
-	}
-
 </script>
 
-<GModal show = {showModal} on:close = {handleClose}/>
+{#if !$authStore.currentUser}
+	<LoginModal show = {showModal}  on:close = {handleClose}/>
+{:else}
+	<DashBoardModal show = {showModal}  on:close = {handleClose}/>
+{/if}
 	
 
 <header>
@@ -37,26 +38,29 @@
 					<a class="nav-link" href="/features">Features</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/features">Pricing</a>
+					<a class="nav-link" href="/pricing">Pricing</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="/calculator">Calculator</a>
 				</li>
 				
 			</ul>
-			{#if LoggedIn}
+				{#if $authStore.currentUser}
 				<div class="login-button-container">
-					<button class="btn btn-primary my-2 my-sm-0">Dashboard</button>
+					<button id="Gmodal" class="btn btn-primary my-2 my-sm-0"
+						on:click={() => { showModal = true;}}
+						>Dashboard
+					</button>
 				</div>
-			{:else}
+				{:else}
 				<div class="login-button-container">
-					<button id="GModal" class="btn btn-primary my-2 my-sm-0"
+					<button id="Gmodal" class="btn btn-primary my-2 my-sm-0"
 					on:click={() => { showModal = true;}}
 					>Login
-				</button>
-					
+					</button>
 				</div>
-			{/if}
+				{/if}
+
             </div>
 	</nav>
 	

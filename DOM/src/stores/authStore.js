@@ -5,20 +5,21 @@ import { auth } from '../lib/firebase/firebase.client';
 
 export const authStore = writable({
     isLoading: true,
-    currenUser: null
+    currentUser: null
 });
 
 export const authHandlers = {
-    login: async (email, password) =>{
+    login: async (email, password) =>{ 
         await signInWithEmailAndPassword(auth, email, password);
     },
-    signup: async (email, password) =>{
+    signup: async (email, password) => {
         await createUserWithEmailAndPassword(auth, email, password);
     },
-    logout: async () =>{
+    logout: async () => {
         await signOut(auth);
+        console.log('logged out');
     },
-    resetPassword: async (email) =>{
+    resetPassword: async (email) => {
         await sendPasswordResetEmail(auth, email);
     },
     updateEmail: async (email) =>{
