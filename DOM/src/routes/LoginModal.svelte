@@ -45,7 +45,7 @@
             }
         }
         if ($authStore.currentUser){
-            //console.log($authStore.email);
+            console.log($authStore.email);
             console.log("logged in " + $authStore.currentUser.email);
         }
     }
@@ -66,12 +66,25 @@
                     <div class="input-container form-group">
                         <input bind:value={email} type="email" class="form-control" placeholder="Email" />
                         <input bind:value={password} type="password" class="form-control" placeholder="Password" />
+                        
                         {#if register}
                         <input bind:value={confirmPassword} type="password" class="form-control" placeholder="Confirm Password" />
+                        {:else}
+                        <button type="button" class="btn btn-outline-primary btn-sm" on:click={async() => {
+                            try {
+                                await authHandlers.resetPassword(email);
+                            }
+                            catch(err){
+                                console.log(err);
+                            }
+                            
+                        }}>Reset Password</button>
                         {/if}
+
                     </div>
                 </div>
                 <div class="modal-footer">
+                    
                     {#if !register}
                     <button on:click={() => {
                         register = true;

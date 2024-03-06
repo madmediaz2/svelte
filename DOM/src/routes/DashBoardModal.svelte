@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" on:click={() => handleSubmit("logout")}>Log Out</button>
+                    <button on type="button" class="btn btn-secondary" on:click={() => handleSubmit("logout")}>Log Out</button>
                     
                 </div>
             </div>
