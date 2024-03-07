@@ -6,50 +6,106 @@
 	let amount = null;
 	let linkToBusiness = '';
 	let category = null;
+
 	const dispatch = createEventDispatcher();
+
 	const parameterButtons = [
-			'Add Staff',             // 0
-			'Add Beverages',         // 1
-			'Add Food',              // 2
-			'Add Music',             // 3
-			'Add Decorations',       // 4
-			'Add Lighting',          // 5
-			'Add Entertainment',     // 6
-			'Add Security',          // 7
-			'Add Cleaning',          // 8
-			'Add Parking',           // 9
-			'Add Insurance',         // 10
-			'Add Legal',             // 11
-			'Add Utilities',         // 12
-			'Add Maintenance',       // 13
-			'Add Rent',              // 14
-			'Add Mortgage',          // 15
-			'Add Equipment',         // 16
-			'Add Furniture',         // 17
-			'Add Technology',        // 18
-			'Add Software',          // 21
-			'Add Hardware',          // 22
-			'Add Services',          // 23
-			'Add Training',          // 24
-			'Add Travel',            // 25
-			'Add Subscriptions',     // 26
-			'Add Memberships',       // 27
-			'Add Licenses',          // 28
-			'Add Permits',           // 29
-			'Add Certifications',    // 30
-			'Add Custom Parameters', // 31
-		];
-		let buttonsCat1 =[];
+		'Add Staff',             // 0
+		'Add Beverages',         // 1
+		'Add Food',              // 2
+		'Add Music',             // 3
+		'Add Decorations',       // 4
+		'Add Scenery',           // 5
+		'Add Lighting',          // 6
+		'Add Entertainment',     // 7
+		'Add Security',          // 8
+		'Add Cleaning',          // 9
+		'Add Parking',           // 10
+		'Add Insurance',         // 11
+		'Add Legal',             // 12
+		'Add Utilities',         // 13
+		'Add Maintenance',       // 14
+		'Add Rent',              // 15
+		'Add Loans',             // 16
+		'Add Equipment',         // 17
+		'Add Furniture',         // 18
+		'Add Technology',        // 19
+		'Add Software',          // 22
+		'Add Hardware',          // 23
+		'Add Services',          // 24
+		'Add Training',          // 25
+		'Add Travel',            // 26
+		'Add Subscriptions',     // 27
+		'Add Memberships',       // 28
+		'Add Licenses',          // 29
+		'Add Permits',           // 30
+		'Add Certifications',    // 31
+		'Add Custom Parameters', // 32
+	];
 
-		
-
-
-	function addNewInputField() {
-		//TODO
-	}
+	const parameterFieldExamples =[
+		'e.g. John Doe',                                       // 0
+		'e.g. Coffee, Tea, Beer',                              // 1
+		'e.g. Pizza, Bagels, Sandwiches',                      // 2
+		'e.g. Hip-Hop, Jazz, Rock',                            // 3
+		'e.g. Theme Color, Modern, Vintage',                   // 4
+		'e.g. City Views, Landscapes',                         // 5
+		'e.g. LED, Neon, Lasers',                              // 6
+		'e.g. DJ, Television, Live Band',                      // 7
+		'e.g. Bouncer, Security Guard',                        // 8
+		'e.g. Janitor, Cleaning Service',                      // 9
+		'e.g. Parking Lot, Valet, Street Parking',             // 10
+		'e.g. Liability, Property, Health',                    // 11
+		'e.g. Legal Advice, Legal Services,', 				   // 12
+		'e.g. Water, Gas, Electricity',                        // 13
+		'e.g. Maintenance Worker, Maintenance Service',        // 14
+		'e.g. Rent, Lease, Sublet',                            // 15
+		'e.g. Mortgage, Loan, Payment Plan',                   // 16
+		'Special Equipment Of The Business',                   // 17
+		'e.g. Tables, Chairs, Bar Stools',                     // 18
+		'Special Technology Of The Vusiness',                  // 19
+		'e.g. Software, Application, Program',                 // 22
+		'e.g. Hardware, Computer, Server',                     // 23
+		'Special Services Ff The business',                    // 24
+		'Special Training Of The Business',                    // 25
+		'e.g. Bike, Train, Bus',                               // 26
+		'Special Subscriptions Of The Business',               // 27
+		'Special Memberships Of The Business',                 // 28
+		'Special Licenses Of The Business',                    // 29
+		'Special Permits Of The Business',                     // 30
+		'Special Certifications Of The Business',              // 31
+		'Custom Input Field',                                  // 32
+	];
 	
 
+	let parameterButtonsForCategory = [];
+
+
+
+
+	function pushIndex(...index){
+		let arrayList = [];
+		index.forEach((i) => {
+			arrayList.push(parameterButtons[i]);
+		});
+		return arrayList;
+	}
+
+	function allUnchecked(arrayList){
+		let allUnchecked = true;
+		arrayList.forEach((e) => {
+			let checkbox = document.getElementById(e);
+			if (checkbox.checked) {
+				allUnchecked = false;
+			}
+		});
+		return allUnchecked;
+	}
+
+
 	onMount(() => {
+
+
 		// Add any initialization logic here
 
 		const mainCategories = [
@@ -111,8 +167,11 @@
 
 
 		let categorySelect = document.getElementById('category--Select');
+		let pmFieldCard = document.getElementById(`js--parameters`);
+		let pmFields = document.getElementById('js--pmFields');
 		
 		
+		//initialize the category select with correct category as value
 		for (let i = 1; i < mainCategories.length; i++) {
 			mainCategories[i].forEach((element) => {
 				//console.log(element);
@@ -123,25 +182,46 @@
 			});
 		}
 
-		let parameterButtonsDiv = document.getElementById('parameters--buttons');
-		
-		function pushIndex(...index){
-			
-			let arrayList = [];
 
-			index.forEach((i) => {
-				arrayList.push(parameterButtons[i]);
-			});
-			
-			
-			console.log(arrayList);
-			return arrayList;
-			
-		}
-
-		buttonsCat1 = pushIndex(1, 2, 3, 4, 5, 7, 8, 9, 10);
 
 		
+		//initialize the parameter buttons
+		categorySelect.addEventListener('change' , (event) => {
+			console.log(event.target.value);
+			let currentCategory = event.target.value;
+			if (currentCategory == 1) { // light catering/day bag
+				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+			}
+			if(currentCategory == 2){ // catering
+				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
+			}
+			if(currentCategory == 3){ // medium catering
+				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4);
+			}
+			if(currentCategory == 4){ // heavy catering
+				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6);
+			}
+			if(currentCategory == 5){ // renting and leasing
+				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6, 7, 8);
+			}
+			if(currentCategory == 6){ // travel and transport
+				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4);
+			}
+		});
+
+		//hide the parameter fields when all checkboxes are unchecked
+		pmFieldCard.addEventListener('change', () => {
+			if (allUnchecked(parameterButtonsForCategory)) {
+				pmFields.style.display = 'none';
+			}
+		});
+
+		pmFields.addEventListener('click', () => {
+			if (allUnchecked(parameterButtonsForCategory)) {
+				pmFields.style.display = 'none';
+			}
+		});
+
 
 	});
 
@@ -158,7 +238,8 @@
 				<select
 					on:change={(event) => {
 						category = event.target.value; //sets the value of the selected category
-						console.log(category);
+						//console.log(category);
+						document.getElementById('js--parameters').style.display = 'block';
 					}}
 					class="form-select"
 					id="category--Select"
@@ -166,110 +247,86 @@
 				>
 					<option selected>Select A Category</option>
 				</select>
-				{#if category == null}
-					<div class="card-body card parameters-card">
-						<div class="card">
-							<div class="parameters-card-body card-body">
-								<div class="btn-group parameter-buttons" role="group" id="parameters--buttons">
-									
-									<!-- Example Parameter Button -->
-									<input 
-										type="checkbox" 
-										class="btn-check" 
-										id="AddStaff"
-										autocomplete="off"
-										on:change={(event) => {
-											console.log(event.target.checked);
-											if (event.target.checked) {
-												let pmField = document.getElementById("parameter--fields")
-												let newpmField = document.createElement('div');		
-												newpmField.id = "parameterButtons[i]";								
-												pmField.appendChild(newpmField);
-											}
-											else{
-												document.getElementById("parameterButtons[i]").remove();
-											}
-											
-										}}/>
-									<label class="btn btn-sm btn-outline-primary" for="AddStaff">Single toggle</label>
-
-								</div>
-						</div>
-
-						
-						</div>
-						<div class="card-body card  paramaters-field" id="parameter--fields" style="margin-top: 5px;">
-							<!-- Example Parameter Fields -->
-							<div id="parameterButtons[1]"> <!-- index: add Staff -->
-								<div class="customer-inputs input-group input-group-sm mb-3">
-					
-									<span 
-										class="input-group-text" 
-								
-									>
-										Staff Name
-									</span>
-									<input 
-										type="text" 
-										class="form-control"
-										id="staffName"  
-										placeholder="Example: John doe"
-									/>
-									
-									<button 
-										class="btn btn-outline-secondary" 
-										type="button" 
-											on:click={() =>{
-												document.getElementById("parameterButtons[1]").remove()
-											}
-										}
-									>
-										Disable
-									</button>
-
-									<button 
-										class="btn btn-outline-secondary" 
-										type="button" 
-										
-											on:click={() => {
-												//TODO
-											}
-										}
-									>	
-										Add
-									</button>
-
-								</div>
-							</div>
-						</div>
-					</div>
-				
-				{:else if (category == 1)}
-				<div class="card-body card parameters-card">
+				<!--Parameter-->
+				<div class="card-body card parameters-card" id="js--parameters" style="display: none;">
 					<div class="card">
 						<div class="parameters-card-body card-body">
+
+							<!--Parameter Buttons-->
 							<div class="btn-group parameter-buttons" role="group" id="parameters--buttons">
 
-								{#each buttonsCat1 as pmButtons }
+								{#each parameterButtonsForCategory as pmButtons }
 									<input 
 										type="checkbox" 
 										class="btn-check" 
 										id={pmButtons}
+										checked={false}
 										autocomplete="off"
+										on:click={(event) => {
+											let checked = event.target.checked;
+											let field = document.getElementById(`pmField-[${pmButtons}]`);
+											let fields = document.getElementById('js--pmFields');
+											fields.style.display = 'block';
+											//console.log(event.target.id);
+											if (checked) {			
+												field.style.display = 'block';
+											}
+											else{
+												field.style.display = 'none';
+											}
+										}}
 										/>
 									<label class="btn btn-sm btn-outline-primary" for={pmButtons}>{pmButtons}</label>
 									
 								{/each}
 
 							</div>
-						</div>
-						
+						</div>	
+					</div>
 
+					<!--Parameter Fields-->
+					<div class="card-body card parameters-field" id="js--pmFields" style="display: none; margin-top: 5px; height: fit-content">
+							{#each parameterButtonsForCategory as pmFields }
+								<div id={`pmField-[${pmFields}]`} style="display: none;">
+									<div class="customer-inputs input-group input-group-sm mb-3">
+										<span 
+											class="input-group-text" 
+										>
+											{pmFields.substring(3)}
+										</span>
+										<input 
+											type="text" 
+											class="form-control"
+											id={`pmField-[${pmFields}]`} 
+											placeholder={`${parameterFieldExamples[parameterButtons.indexOf(pmFields)]}`}
+										/>
+										<button 
+											class="btn btn-outline-secondary" 
+											type="button" 
+												on:click={() =>{
+													document.getElementById(`pmField-[${pmFields}]`).style.display = 'none';
+													let checkbox = document.getElementById(`${pmFields.toString()}`);
+													checkbox.checked = false; 
+												}
+											}
+										>
+											Disable
+										</button>
+										<button 
+											class="btn btn-outline-secondary" 
+											type="button" 
+												on:click={() =>{
+													//TODO
+												}
+											}
+										>
+											Add
+										</button>
+									</div>
+								</div>
+							{/each}
 					</div>
 				</div>
-				
-
-				{/if}
 				
 			</div>
 			<div class="card-footer"> 
@@ -337,7 +394,7 @@
 									document.getElementById('pricing--card').style.display = 'none';
 									document.getElementById('pricing--button2').style.display = 'block';
 								}}
-							>å
+							>
 								Hide
 							</button>
 						</div>

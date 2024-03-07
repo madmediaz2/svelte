@@ -115,12 +115,6 @@
         border-top: 1px solid #ccc;
     }
 
-    .resets{
-        display: flex;
-        flex-direction: row;
-        margin-top: 5px;
-    }
-
     .inputs {
         display: flex;
         flex-direction: column;
