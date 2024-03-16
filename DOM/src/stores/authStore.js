@@ -5,7 +5,8 @@ import { auth } from '../lib/firebase/firebase.client';
 
 export const authStore = writable({
     isLoading: true,
-    currentUser: null
+    currentUser: null,
+    data: {}
 });
 
 export const authHandlers = {

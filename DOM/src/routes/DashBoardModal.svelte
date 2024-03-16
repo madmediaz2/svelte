@@ -2,6 +2,7 @@
     import { createEventDispatcher, onMount} from "svelte";
 	import { authHandlers } from "../stores/authStore";
     import { authStore } from "../stores/authStore";
+    import { goto } from '$app/navigation';
     const dispatch = createEventDispatcher();
     export let show = false;
 
@@ -46,19 +47,46 @@
                     <button type="button" class="btn-close" on:click={close}></button>
                 </div>
                 <div class="modal-body">
-                    <div class="inputs">
-                        <input type="password" class="form-control" placeholder="old Password" />
-                        <input type="password" class="form-control" placeholder="new Password" />
-                        <input type="password" class="form-control" placeholder="confirm Password">
-                    </div>
-                    
-                    <div id="resets" class="input-container form-group reset-pw">
-                        <button type="button" class="btn btn-primary">Reset Password</button>
-                        <button type="button" class="btn btn-primary">Reset Email</button>
-                    </div>
+                   <div class="card dashboard-card">
+                        <div class="card-body control-panel"
+                        >
+                        <button
+                            type="button"
+                            class="btn btn-outline-primary btn-sm"
+                        >
+                            Change Password
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-outline-primary btn-sm"
+                        >
+                            Change Email
+                        </button>
+                            
+                        </div>
+                   </div>
+                   <div class="card dashboard-card">
+                        <div class="card-body info-panel"
+                        >
+                            
+                        </div>
+                   </div>
                 </div>
                 <div class="modal-footer">
-                    <button on type="button" class="btn btn-secondary" on:click={() => handleSubmit("logout")}>Log Out</button>
+                    <button 
+                    type="submit"
+                    class="btn btn-primary btn-sm"
+                    style="width: 100%;"
+                        on:click={()=>{
+                            goto("/dashboard");
+                            close();
+                        }}
+                    >
+                      User Panel
+
+                    </button>
+                    <button on type="button" class="btn btn-secondary btn-sm" style="width: 100%;"
+                     on:click={() => handleSubmit("logout")}>Sign Out</button>
                     
                 </div>
             </div>
@@ -78,15 +106,10 @@
         justify-content: center;
         align-items: right;
     }
-    .input-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
+
     .modal-content{
         display: flex;
         flex-direction: column;
-        gap: 10px;
     }
 
     .modal-dialog {
@@ -105,20 +128,32 @@
         border-bottom: 1px solid #ccc;
     }
     .modal-body {
-        padding: 15px;
+        display: flex;
+        flex-direction: row;
+        padding: 0px;
+        margin: 10px;
+        gap: 5px;
     }
     .modal-footer {
         display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        padding: 10px 15px;
+        flex-direction: column;
         border-top: 1px solid #ccc;
+        margin: 2px;
+        padding: 5px;
+        gap: 0px;
     }
 
-    .inputs {
+    .dashboard-card {
+        width: 100%;
+    }
+
+    .control-panel {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 7px;
+    }
+    .control-panel button {
+        width: 100%;
     }
 
     .btn-close {
@@ -126,6 +161,7 @@
         border: none;
         cursor: pointer;
     }
+    
     .btn-close:hover {
         color: #000;
     }

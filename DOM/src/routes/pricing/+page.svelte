@@ -1,24 +1,41 @@
 <script>
 	import { onMount } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
-	import { authHandlers, authStore } from '../../stores/authStore';
+	import { authStore } from '../../stores/authStore';
+	import { auth, db } from '../../lib/firebase/firebase.client';
+
+
 
 	let amount = null;
 	let linkToBusiness = '';
 	let category = null;
+	let showParameters = true;
+
+	class Form {
+		constructor(uid, category, parameters, appendedParameters, linkToBusiness, amount){
+			this.uid = uid;
+			this.category = category;
+			this.parameters = parameters;
+			this.appendedParameters = appendedParameters;
+			this.linkToBusiness = linkToBusiness;
+			this.amount = amount;
+		}
+	}	
+
+
 
 	//Appended parameters will be added to the appendedParameters array
 	let appendedParameters = [];
 
 	//Function to add a new parameter to the appendedParameters array
 	function addParameter(newParameter) {
-    	appendedParameters = [...appendedParameters, newParameter];
+		appendedParameters = [...appendedParameters, newParameter];
 	}
 
 	//Function to remove a parameter from the appendedParameters array
 	function removeParameter(parameterId) {
-    	appendedParameters = appendedParameters.filter(p => p.id !== parameterId);
-	}
+		appendedParameters = appendedParameters.filter((p) => p.id !== parameterId);
+	}  
 
 	const dispatch = createEventDispatcher();
 
@@ -92,6 +109,7 @@
 
 	let parameterButtonsForCategory = [];
 
+	//Function to push the index of the parameter buttons to the parameterButtonsForCategory array
 	function pushIndex(...index) {
 		let arrayList = [];
 		index.forEach((i) => {
@@ -100,6 +118,7 @@
 		return arrayList;
 	}
 
+	//Function to check if all checkboxes are unchecked
 	function allUnchecked(arrayList) {
 		let allUnchecked = true;
 		arrayList.forEach((e) => {
@@ -111,8 +130,16 @@
 		return allUnchecked;
 	}
 
-	onMount(() => {
+	//Function to check if there are any appended parameters
+	function getParameters(arrayList) {
+		let parameters = true;
+		if (arrayList.length > 0) {
+			parameters = false;
+		}
+		return parameters;
+	}
 
+	onMount(() => {
 		const mainCategories = [
 			'',
 			[
@@ -141,15 +168,7 @@
 				'Bowling Alley',
 				'Arcade'
 			], // 3 medium catering
-			[
-				'Venue Rental', 
-				'Party Center', 
-				'Banquet Hall', 
-				'Casino', 
-				'Discotheque', 
-				'Bar', 
-				'Nightclub'
-			], // 4 heavy catering
+			['Venue Rental', 'Party Center', 'Banquet Hall', 'Casino', 'Discotheque', 'Bar', 'Nightclub'], // 4 heavy catering
 			[
 				'Air-BNB',
 				'Rental-Service',
@@ -160,18 +179,14 @@
 				'Boat Retailer',
 				'Real Estate Agent'
 			], // 5 renting and leasing
-			[
-				'Travel Agency', 
-				'Bus Company', 
-				'Taxi Company', 
-				'Car / Boat Rental', 
-				'Bike / Scooter Rental'
-			] // 6 travel and transport
+			['Travel Agency', 'Bus Company', 'Taxi Company', 'Car / Boat Rental', 'Bike / Scooter Rental'] // 6 travel and transport
 		];
 
 		let categorySelect = document.getElementById('category--Select');
 		let pmFieldCard = document.getElementById(`js--parameters`);
 		let pmFields = document.getElementById('js--pmFields');
+		let inputFieldsCard = document.getElementById('js--inputFieldsCard');
+		let inputFields = document.getElementById('js--inputFields');
 
 		//initialize the category select with correct category as value
 		for (let i = 1; i < mainCategories.length; i++) {
@@ -190,27 +205,27 @@
 			let currentCategory = event.target.value;
 			if (currentCategory == 1) {
 				// light catering/day bag
-				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 			}
 			if (currentCategory == 2) {
 				// catering
-				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12);
+				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 			}
 			if (currentCategory == 3) {
 				// medium catering
-				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4);
+				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5);
 			}
 			if (currentCategory == 4) {
 				// heavy catering
-				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6);
+				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5);
 			}
 			if (currentCategory == 5) {
 				// renting and leasing
-				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6, 7, 8);
+				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6, 7);
 			}
 			if (currentCategory == 6) {
 				// travel and transport
-				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4);
+				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5);
 			}
 		});
 
@@ -226,7 +241,29 @@
 				pmFields.style.display = 'none';
 			}
 		});
+
+		//hide the input fields when there are no appended parameters
+		inputFields.addEventListener('click', () => {
+			if (getParameters(appendedParameters)) {
+				inputFieldsCard.style.display = 'none';
+			}
+		});
 	});
+	
+	//Function to create a new form
+	function createForm(){
+		const form = new Form(
+			authStore.currentUser,
+			category,
+			parameterButtonsForCategory,
+			appendedParameters,
+			linkToBusiness,
+			amount
+		);
+		console.log(form);
+		return form;
+	
+	}
 </script>
 
 <article class="text-center">
@@ -250,12 +287,12 @@
 					<option selected>Select A Category</option>
 				</select>
 
-				<!--Parameter-->
+				<!--Parameter Fields-->
 				<div class="card-body card parameters-card" id="js--parameters" style="display: none;">
 					<div class="card">
 						<div class="parameters-card-body card-body">
 							<!--Parameter Buttons-->
-							<div class="btn-group parameter-buttons" role="group" id="parameters--buttons">
+							<div class="parameter-buttons" role="group" id="parameters--buttons">
 								{#each parameterButtonsForCategory as pmButtons}
 									<input
 										type="checkbox"
@@ -282,7 +319,7 @@
 						</div>
 					</div>
 
-					<!--Parameter Fields-->
+					<!--Input Fields-->
 					<div
 						class="card-body card parameters-field"
 						id="js--pmFields"
@@ -299,19 +336,19 @@
 										class="form-control"
 										id={`pmField-input-[${pmFields}]`}
 										placeholder={`${parameterFieldExamples[parameterButtons.indexOf(pmFields)]}`}
-										on:keyup={(event) =>{
-											if(event.key === 'Enter'){
-												let inputFields = document.getElementById('js--inputFields');
+										on:keyup={(event) => {
+											if (event.key === 'Enter') {
+												let inputFields = document.getElementById('js--inputFieldsCard');
 												inputFields.style.display = 'block';
 												let appendedValue = document.getElementById(`pmField-input-[${pmFields}]`);
 												addParameter({
 													id: Date.now(), // Unique ID for the new parameter
 													parameter: pmFields.substring(4),
-													value: appendedValue.value
+													value: appendedValue.value 
 												});
 												appendedValue.value = '';
 											}
-										}}	
+										}}
 									/>
 									<button
 										class="btn btn-outline-secondary"
@@ -324,13 +361,13 @@
 											appendedValue.value = '';
 										}}
 									>
-										Disable
+										Hide
 									</button>
 									<button
 										class="btn btn-outline-secondary"
 										type="button"
 										on:click={() => {
-											let inputFields = document.getElementById('js--inputFields');
+											let inputFields = document.getElementById('js--inputFieldsCard');
 											inputFields.style.display = 'block';
 											let appendedValue = document.getElementById(`pmField-input-[${pmFields}]`);
 											addParameter({
@@ -347,48 +384,47 @@
 							</div>
 						{/each}
 					</div>
-
-					<!--Input Fields-->
+				</div>
+				
+				
+				<!--Appended Parameters-->
+				<div class="card" style="margin-top: 5px; display: none;" id="js--inputFieldsCard">
 					<div
-						class="appended-parameters-card card card body parameters-card"
-						style="display: none;"
+						class="appended-parameters-card card-body parameters-card"
 						id="js--inputFields"
 					>
-						<div class="appended-parameters">
-							<div
-								class="input-group input-group-sm mb-3 appended-parameters-field"
-								id="appended-field[id]"
-							>
-								{#each appendedParameters as appendedPm}
-									<div
-										class="input-group input-group-sm mb-3 appended-parameters-field"
-										id={`appended-${appendedParameters.id}`}
-									>
-										<span class="input-group-text" id="inputGroup-sizing-sm">
-											{appendedPm.parameter}
-										</span>
+						<div class="appended-parameters-fields">
+							{#each appendedParameters as appendedPm}
+								<div
+									class="input-group input-group-sm mb-3"
+									id={`appended-${appendedParameters.id}`}
+								>
+									<form class="form-floating">
 										<input
-											type="input-group-text"
-											class="form-control"
+											type="text"
+											class="form-control form-control-sm"
+											id={appendedPm.id}
 											bind:value={appendedPm.value}
 										/>
-										<button
-											class="btn btn-outline-secondary"
-											type="button"
-											on:click={() => {
-												removeParameter(appendedPm.id);
-												console.log(appendedPm)
-											}}
-										>
-											Remove
-										</button>
-									</div>
-								{/each}
-							</div>
+										<label for={appendedPm.id}>{appendedPm.parameter}</label>
+									</form>
+									<button
+										class="btn btn-outline-secondary"
+										type="button"
+										on:click={() => {
+											removeParameter(appendedPm.id);
+											console.log(appendedPm);
+										}}
+									>
+										Remove
+									</button>
+								</div>
+							{/each}
 						</div>
 					</div>
 				</div>
 			</div>
+
 			<div class="card-footer">
 				<!--link to business-->
 				<div class="customer-inputs input-group input-group-sm mb-3">
@@ -470,7 +506,7 @@
 							Buy €{amount * 4}
 						</button>
 						{#if $authStore.currentUser}
-							<button class="btn btn-outline-primary" style="width: 100%;"> Save </button>
+							<button class="btn btn-outline-primary" style="width: 100%;" on:click={createForm}> Save </button>
 						{/if}
 					</div>
 				</div>
@@ -526,10 +562,10 @@
 	}
 
 	.parameter-buttons {
-		flex-wrap: wrap;
-		justify-content: center;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 		margin: 0;
-		padding: 10px;
+		gap: 5px;
 	}
 
 	.appended-parameters-card {
@@ -537,13 +573,11 @@
 		padding: 5px;
 	}
 
-	.appended-parameters {
+	.appended-parameters-fields {
 		display: flex;
-		flex-direction: row;
-	}
-
-	.appended-parameters-field {
-		display: flex;
-		flex-direction: row;
+		flex-direction: column;
+		padding: 5px;
+		margin-top: 10px;
+		margin-bottom: 0px;
 	}
 </style>
