@@ -45,7 +45,6 @@
             }
         }
         if ($authStore.currentUser){
-            console.log($authStore.email);
             console.log("logged in " + $authStore.currentUser.email);
         }
     }
@@ -65,7 +64,7 @@
                 <div class="modal-body">
                     <div class="input-container form-group">
                         <input bind:value={email} type="email" class="form-control" placeholder="Email" />
-                        <input bind:value={password} type="password" class="form-control" placeholder="Password" />
+                        <input bind:value={password} on:keyup={(event) => {if(event.key === 'Enter'){handleSubmit();}}} type="password" class="form-control" placeholder="Password" />
                         
                         {#if register}
                         <input bind:value={confirmPassword} type="password" class="form-control" placeholder="Confirm Password" />
@@ -89,7 +88,7 @@
                     <button on:click={() => {
                         register = true;
                     }}  type="button" class="btn btn-secondary" id="register--button" >Register</button>
-                    <button on:click={handleSubmit} type="button" class="btn btn-primary" id="login--button">Login</button>
+                    <button on:click={handleSubmit} type="button" class="btn btn-primary" id="login--button">Sign In</button>
                     {:else}
                     <button on:click={handleSubmit} type="button" class="btn btn-primary" id="login--button">Submit</button>
                     {/if}
