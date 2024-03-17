@@ -11,8 +11,16 @@
 
 	onMount(() =>{
 		const unsubscribe = auth.onAuthStateChanged(async (user) => {
+
 			//console.log(user);
 			const currentPath = window.location.pathname;
+
+			authStore.update((curr) => {
+				return {
+					...curr, 
+					isLoading: false, 
+					currentUser: user }
+			});
 
 			if(!user && !nonAuthRouters.includes(currentPath)){
 				window.location.href = "/";
@@ -22,9 +30,11 @@
 			if(!user){
 				return;
 			}
+			
+			
 
 			let dataToSetToStore;
-
+			
 			const docref = doc(db, "users", user.uid);
 			const docSnap = await getDoc(docref);
 
@@ -46,12 +56,11 @@
 				dataToSetToStore = userData;
 			}
 
-			authStore.update((curr) => {
-				return {
-					...curr, 
-					isLoading: false, 
-					currentUser: user }
-			});
+			
+
+			
+
+			
 		});
 	})
 </script>

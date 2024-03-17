@@ -2,27 +2,33 @@
 	import { onMount } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { authStore } from '../../stores/authStore';
-	import { auth, db } from '../../lib/firebase/firebase.client';
-
-
+	import { db } from '../../lib/firebase/firebase.client';
+	import { collection, addDoc } from 'firebase/firestore';
 
 	let amount = null;
 	let linkToBusiness = '';
 	let category = null;
-	let showParameters = true;
 
 	class Form {
-		constructor(uid, category, parameters, appendedParameters, linkToBusiness, amount){
+		constructor(uid, category, appendedParameters, linkToBusiness, amount) {
 			this.uid = uid;
 			this.category = category;
-			this.parameters = parameters;
 			this.appendedParameters = appendedParameters;
 			this.linkToBusiness = linkToBusiness;
 			this.amount = amount;
 		}
-	}	
 
-
+		convertForm() {
+			const form = {
+				uid: this.uid,
+				category: this.category,
+				appendedParameters: this.appendedParameters,
+				linkToBusiness: this.linkToBusiness,
+				amount: this.amount
+			};
+			return form;
+		}
+	}
 
 	//Appended parameters will be added to the appendedParameters array
 	let appendedParameters = [];
@@ -35,7 +41,7 @@
 	//Function to remove a parameter from the appendedParameters array
 	function removeParameter(parameterId) {
 		appendedParameters = appendedParameters.filter((p) => p.id !== parameterId);
-	}  
+	}
 
 	const dispatch = createEventDispatcher();
 
@@ -193,7 +199,7 @@
 			mainCategories[i].forEach((element) => {
 				//console.log(element);
 				let option = document.createElement('option');
-				option.value = i;
+				option.value = i + ' ' + element;
 				option.text = element;
 				categorySelect.appendChild(option);
 			});
@@ -201,29 +207,30 @@
 
 		//initialize the parameter buttons
 		categorySelect.addEventListener('change', (event) => {
-			console.log(event.target.value);
 			let currentCategory = event.target.value;
-			if (currentCategory == 1) {
+			console.log(currentCategory);
+
+			if (currentCategory.indexOf('1') > -1) {
 				// light catering/day bag
 				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 			}
-			if (currentCategory == 2) {
+			if (currentCategory.indexOf('2') > -1) {
 				// catering
 				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 			}
-			if (currentCategory == 3) {
+			if (currentCategory.indexOf('3') > -1) {
 				// medium catering
 				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5);
 			}
-			if (currentCategory == 4) {
+			if (currentCategory.indexOf('4') > -1) {
 				// heavy catering
 				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5);
 			}
-			if (currentCategory == 5) {
+			if (currentCategory.indexOf('5') > -1) {
 				// renting and leasing
 				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5, 6, 7);
 			}
-			if (currentCategory == 6) {
+			if (currentCategory.indexOf('6') > -1) {
 				// travel and transport
 				parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5);
 			}
@@ -249,20 +256,47 @@
 			}
 		});
 	});
-	
+
 	//Function to create a new form
-	function createForm(){
+	function createForm() {
 		const form = new Form(
-			authStore.currentUser,
-			category,
-			parameterButtonsForCategory,
+			$authStore.currentUser.uid,
+			category.substring(2),
 			appendedParameters,
 			linkToBusiness,
 			amount
 		);
 		console.log(form);
 		return form;
-	
+	}
+
+	async function saveFormData() {
+		// Assuming createForm properly creates and returns a form object
+		const form = createForm();
+
+		// Ensure form is not null or undefined
+		if (!form) {
+			console.error('Form data is missing or incomplete.');
+			return;
+		}
+
+		// Ensure there's a current user UID available
+		const currentUserUid = $authStore.currentUser?.uid;
+		if (!currentUserUid) {
+			console.error('No current user UID found. User might not be authenticated.');
+			return;
+		}
+
+		try {
+			// Directly add the form data to this user's 'forms' sub-collection in Firestore
+			let savedForm = form.convertForm();
+			await addDoc(collection(db, 'users', currentUserUid, 'forms'), { savedForm });
+			console.log(form);
+
+			console.log("Form saved successfully under the user's document");
+		} catch (error) {
+			console.error('Error saving form:', error);
+		}
 	}
 </script>
 
@@ -277,7 +311,7 @@
 				<select
 					on:change={(event) => {
 						category = event.target.value; //sets the value of the selected category
-						//console.log(category);
+						console.log(category);
 						document.getElementById('js--parameters').style.display = 'block';
 					}}
 					class="form-select"
@@ -344,7 +378,7 @@
 												addParameter({
 													id: Date.now(), // Unique ID for the new parameter
 													parameter: pmFields.substring(4),
-													value: appendedValue.value 
+													value: appendedValue.value
 												});
 												appendedValue.value = '';
 											}
@@ -385,14 +419,10 @@
 						{/each}
 					</div>
 				</div>
-				
-				
+
 				<!--Appended Parameters-->
 				<div class="card" style="margin-top: 5px; display: none;" id="js--inputFieldsCard">
-					<div
-						class="appended-parameters-card card-body parameters-card"
-						id="js--inputFields"
-					>
+					<div class="appended-parameters-card card-body parameters-card" id="js--inputFields">
 						<div class="appended-parameters-fields">
 							{#each appendedParameters as appendedPm}
 								<div
@@ -506,7 +536,9 @@
 							Buy €{amount * 4}
 						</button>
 						{#if $authStore.currentUser}
-							<button class="btn btn-outline-primary" style="width: 100%;" on:click={createForm}> Save </button>
+							<button class="btn btn-outline-primary" style="width: 100%;" on:click={saveFormData}>
+								Save
+							</button>
 						{/if}
 					</div>
 				</div>
