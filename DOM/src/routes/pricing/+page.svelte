@@ -291,7 +291,6 @@
 			// Directly add the form data to this user's 'forms' sub-collection in Firestore
 			let savedForm = form.convertForm();
 			await addDoc(collection(db, 'users', currentUserUid, 'forms'), { savedForm });
-			console.log(form);
 
 			console.log("Form saved successfully under the user's document");
 		} catch (error) {
@@ -443,7 +442,7 @@
 										type="button"
 										on:click={() => {
 											removeParameter(appendedPm.id);
-											console.log(appendedPm);
+											//console.log(appendedPm);
 										}}
 									>
 										Remove
