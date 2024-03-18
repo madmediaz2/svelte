@@ -45,7 +45,7 @@
             }
         }
         if ($authStore.currentUser){
-            console.log("logged in " + $authStore.currentUser.email);
+            //console.log("logged in " + $authStore.currentUser.email);
         }
     }
 

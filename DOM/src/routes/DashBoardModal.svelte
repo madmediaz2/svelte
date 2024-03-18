@@ -15,7 +15,7 @@
     const stopPropagation = (event) => {
         event.stopPropagation();
     };
-
+    
     async function handleSubmit(value){
         switch (value) {
             case "logout":
@@ -85,7 +85,7 @@
                       User Panel
 
                     </button>
-                    <button on type="button" class="btn btn-secondary btn-sm" style="width: 100%;"
+                    <button type="button" class="btn btn-secondary btn-sm" style="width: 100%;"
                      on:click={() => handleSubmit("logout")}>Sign Out</button>
                     
                 </div>
