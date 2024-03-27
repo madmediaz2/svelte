@@ -26,7 +26,15 @@ export const mainCategories = [
 		'Bowling Alley',
 		'Arcade'
 	], // 3 medium catering
-	['Venue Rental', 'Party Center', 'Banquet Hall', 'Casino', 'Discotheque', 'Bar', 'Nightclub'], // 4 heavy catering
+	[
+        'Venue Rental', 
+        'Party Center', 
+        'Banquet Hall',  
+        'Casino',  
+        'Discotheque',  
+        'Bar',  
+        'Nightclub'
+    ], // 4 heavy catering
 	[
 		'Air-BNB',
 		'Rental-Service',
@@ -37,7 +45,13 @@ export const mainCategories = [
 		'Boat Retailer',
 		'Real Estate Agent'
 	], // 5 renting and leasing
-	['Travel Agency', 'Bus Company', 'Taxi Company', 'Car / Boat Rental', 'Bike / Scooter Rental'] // 6 travel and transport
+	[
+        'Travel Agency', 
+        'Bus Company', 
+        'Taxi Company', 
+        'Car / Boat Rental', 
+        'Bike / Scooter Rental'
+    ] // 6 travel and transport
 ];
 
 export const parameterButtons = [
@@ -72,6 +86,13 @@ export const parameterButtons = [
 	'Add Permits', // 30
 	'Add Certifications', // 31
 	'Add Custom Parameters' // 32
+];
+
+const test = [
+	{
+		parameter: "Staff",
+		example: "eg John doe"
+	}
 ];
 
 export const parameterFieldExamples = [

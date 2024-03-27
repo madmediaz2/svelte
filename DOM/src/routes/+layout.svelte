@@ -7,7 +7,7 @@
 	import { authStore } from '../stores/authStore';
 	import { doc, getDoc, setDoc } from 'firebase/firestore';
 
-	const nonAuthRouters = ['/', '/pricing', '/calculator'];
+	const nonAuthRouters = ['/', '/pricing', '/calculator', '/payments'];
 
 	onMount(() => {
 		const unsubscribe = auth.onAuthStateChanged(async (user) => {
