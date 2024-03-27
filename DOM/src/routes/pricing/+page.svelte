@@ -5,8 +5,6 @@
 	import { db } from '../../lib/firebase/firebase.client';
 	import { collection, addDoc } from 'firebase/firestore';
 	import {parameterButtons, parameterFieldExamples, mainCategories} from './parameters.js'
-	import SavePopup from '../../components/SavePopup.svelte';
-
 	let amount = null;
 	let linkToBusiness = '';
 	let category = null;
@@ -33,7 +31,13 @@
 	}
 
 	//Appended parameters will be added to the appendedParameters array
-	let appendedParameters = [];
+	let appendedParameters = [
+		{
+			id: Date.now(), // Unique ID for the new parameter
+			parameter: "Staff",
+			value: "Jamie Goblin Erkelens"
+		}
+	];
 
 	//Function to add a new parameter to the appendedParameters array
 	function addParameter(newParameter) {
@@ -117,7 +121,8 @@
 				// renting and leasing
 			if (currentCategory.indexOf('6') > -1) { parameterButtonsForCategory = pushIndex(0, 1, 2, 3, 4, 5); }
 				// travel and transport
-		    if (currentCategory == 'Select A Category') { parameterButtonsForCategory = []; return; }
+			if(currentCategory.indexOf('Hotel') > -1){ parameterButtonsForCategory = pushIndex(12,13) }
+		    if(currentCategory == 'Select A Category') { parameterButtonsForCategory = []; return; }
 			
 		});
 

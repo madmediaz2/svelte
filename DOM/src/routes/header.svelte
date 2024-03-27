@@ -38,6 +38,9 @@
 					<a class="nav-link" href="/pricing">Pricing</a>
 				</li>
 				<li class="nav-item">
+					<a class="nav-link" href="/payments">dev</a>
+				</li>
+				<li class="nav-item">
 					<a class="nav-link" href="/calculator">Calculator</a>
 				</li>
 				

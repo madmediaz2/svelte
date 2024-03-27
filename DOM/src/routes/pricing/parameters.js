@@ -88,6 +88,13 @@ export const parameterButtons = [
 	'Add Custom Parameters' // 32
 ];
 
+const test = [
+	{
+		parameter: "Staff",
+		example: "eg John doe"
+	}
+];
+
 export const parameterFieldExamples = [
 	'e.g. John Doe', // 0
 	'e.g. Coffee, Tea, Beer', // 1
