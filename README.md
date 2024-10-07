@@ -6,5 +6,6 @@ This project includes:
 - Built using [Bootstrap](https://getbootstrap.com) for styling and [Svelte](https://svelte.dev) for building the frontend
 - Payment processing is handled with [Stripe](https://stripe.com)
 - [Firebase](https://firebase.google.com) is used for authentication and managing user data
+- Calculator to calculate the price of the reviews
 
 ![homepage](./static/Homepage.png)
